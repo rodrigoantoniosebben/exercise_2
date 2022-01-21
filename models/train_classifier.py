@@ -1,25 +1,87 @@
 import sys
+import nltk
+nltk.download(['punkt', 'wordnet'])
+
+# import statements
+import re
+import pickle
+import numpy as np
+import pandas as pd
+import sqlalchemy as sql
+
+
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+from sklearn.metrics import classification_report
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 
 def load_data(database_filepath):
-    pass
+    # load data from database
+    engine = sql.create_engine('sqlite:///' + database_filepath)
+    df = pd.read_sql("SELECT * from `messages`", engine)
+    df = df[df.related != 2]
+
+    X = df.message
+    Y = df.loc[:,"related":"direct_report"]
+    return X, Y, Y.columns
 
 
 def tokenize(text):
-    pass
+    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+
+    detected_urls = re.findall(url_regex, text)
+    for url in detected_urls:
+        text = text.replace(url, "")
+
+    # lower text
+    text = text.lower() 
+    
+    # remove !letters and !numbers
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text)
+    
+    # tokenize text
+    tokens = word_tokenize(text)
+    
+    # initiate lemmatizer
+    lemmatizer = WordNetLemmatizer()
+
+    # iterate through each token
+    clean_tokens = []
+    for tok in tokens:
+        # lemmatize, normalize case, and remove leading/trailing white space        
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+
+    return clean_tokens
 
 
 def build_model():
-    pass
+    pipeline = Pipeline([
+        ('vect', CountVectorizer(tokenizer = tokenize)),
+        ('tfidf', TfidfTransformer()),
+        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+    ])
+
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    Y_test = np.array(Y_test)
+    Y_test_predit = model.predict(X_test)
 
+    for idx in range(36):
+        print(str(idx + 1) + ": "+ category_names[idx])
+        print(classification_report(Y_test[:, idx], Y_test_predit[:, idx]))
+        print(" ---------------------------------------------------- ")
 
 def save_model(model, model_filepath):
-    pass
-
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 def main():
     if len(sys.argv) == 3:
