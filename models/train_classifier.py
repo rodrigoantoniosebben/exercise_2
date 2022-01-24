@@ -22,6 +22,17 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 
 def load_data(database_filepath):
+    '''
+    Load data from database_filepath
+ 
+    input:
+        database_filepath: the database file name and path
+    Output:
+        X = The messages
+        Y = the values of the categories
+        col_names = a list with the categories names
+    '''
+
     # load data from database
     engine = sql.create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql("SELECT * from `messages`", engine)
@@ -33,6 +44,14 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    '''
+    Tokenize a message
+ 
+    input:
+        text: the message to be tokenized
+    Output:
+        clean_tokens: a list of tokens from the input
+    '''
     url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
     detected_urls = re.findall(url_regex, text)
@@ -62,6 +81,13 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+    Build the ML Pipeline
+ 
+    Output:
+        pipeline: the pipeline
+    '''
+
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer = tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -72,6 +98,15 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    '''
+    Evaluate model on the test data and print the result
+    input:
+        model: trained model for evaluation
+        X_test: testing features (Unseen data)
+        Y_test: true values to compare with prediction on unseen test cases
+        category_names: column name of Y_test data
+    '''
+
     Y_test = np.array(Y_test)
     Y_test_predit = model.predict(X_test)
 
@@ -81,6 +116,13 @@ def evaluate_model(model, X_test, Y_test, category_names):
         print(" ---------------------------------------------------- ")
 
 def save_model(model, model_filepath):
+    ''''
+    create the pkl
+    input:
+        model: the model to be saved
+        model_filepath: where to save the file
+
+    '''
     pickle.dump(model, open(model_filepath, 'wb'))
 
 def main():
