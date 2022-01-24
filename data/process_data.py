@@ -5,6 +5,16 @@ import sqlalchemy as sql
 
 
 def load_data(messages_filepath, categories_filepath):
+    ''''
+        load messages and categories and merge them
+
+        INPUT:
+        messages_filepath: Path to the messages file
+        categories_filepath: Path to the categories file
+
+        OUTPUT:
+        df: The dataframe with the merged information
+    '''
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     df = messages.merge(categories, how='inner', on='id')
@@ -12,6 +22,15 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    ''''
+        clean the dataframe
+
+        INPUT: 
+        df: the dataframe that will be cleaned
+
+        OUTUPT:
+        df: the dataframe cleaned
+    '''
     categories = df['categories'].str.split(';', expand=True)
 
     # select the first row of the categories dataframe
@@ -39,6 +58,12 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    ''''
+        save the dataframe to a sql file
+        INPUT
+            df: the dataframe
+            database_filename: the file name of the sql file
+    '''
     print(df.head())
     engine = sql.create_engine('sqlite:///' + database_filename)
     df.to_sql('messages', engine, index=False, if_exists='replace')
