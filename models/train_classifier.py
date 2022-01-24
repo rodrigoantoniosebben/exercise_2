@@ -1,11 +1,12 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+import multiprocessing
 import sqlalchemy as sql
 import pandas as pd
 import numpy as np
@@ -13,6 +14,7 @@ import pickle
 import re
 import sys
 import nltk
+
 nltk.download(['punkt', 'wordnet'])
 
 # import statements
@@ -91,7 +93,15 @@ def build_model():
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
 
-    return pipeline
+    parameters = {
+        'vect__min_df': [0.1],
+        'vect__max_df': [0.9],
+        'clf__estimator__n_estimators': [10],
+    }
+
+    cv = GridSearchCV(pipeline, param_grid=parameters,
+                      n_jobs=multiprocessing.cpu_count(), verbose=3)
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
@@ -109,7 +119,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
     for idx in range(36):
         print(str(idx + 1) + ": " + category_names[idx])
-        print(classification_report(Y_test[:, idx], Y_test_predit[:, idx]))
+        print(classification_report(Y_test[:, idx], Y_test_predit[:, idx], zero_division=0))
         print(" ---------------------------------------------------- ")
 
 
