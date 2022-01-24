@@ -1,7 +1,61 @@
-# Disaster Response Pipeline Project
+# Exercice 2  - Disaster Response Pipeline Project
+Udacity Data Scientist Nanodegree Project.
 
-### Instructions:
-1. Run the following commands in the project's root directory to set up your database and model.
+## Table of contents
+1. [Introduction](#introduction)
+2. [Project Motivation](#motivation)
+3. [How to use](#how_to_use)
+4. [Results](#results)
+5. [Licensing, Authors, and Acknowledgements](#licensing)
+   
+## Introduction  <a name="introduction"></a>
+This repository solves the second exercise of the Data Science Nanodegree from Udacity called Disaster Response Pipeline Project.
+
+The files of the project has the following architecture.
+
+* app
+
+| - template
+
+| |- master.html  # main page of web app
+
+| |- go.html  # classification result page of web 
+
+|- run.py  # Flask file that runs app
+
+* data
+
+|- disaster_categories.csv  # data to process 
+
+|- disaster_messages.csv  # data to process
+
+|- process_data.py
+
+|- InsertDatabaseName.db   # database to save clean data to
+
+* models
+
+|- train_classifier.py
+
+|- classifier.pkl  # saved model 
+
+
+## Project Motivation <a name="motivation"></a>
+In this course, you've learned and built on your data engineering skills to expand your opportunities and potential as a data scientist. In this project, you'll apply these skills to analyze disaster data from Figure Eight to build a model for an API that classifies disaster messages.
+
+## How to use <a name="how_to_use"></a>
+1. Install dependencies.
+
+* re
+* nltk
+* numpy
+* pandas
+* pickle
+* sqlite3
+* sklearn
+* sqlalchemy
+
+2. Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database
         `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
@@ -12,3 +66,25 @@
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+## Results <a name="result"></a>
+
+The result is splitted into 3 parts
+
+### Part 1. ETL Pipeline
+
+At the end of the ETL pipeline, a sql file will be created with the data extrated and transofrmed from message and categories.
+
+### Part 2. ML Pipeline
+
+At the end of the ML Pipeline a pkl file will be generated. This file contains the result of the Machine Learning pipeline and will be used by  the server to check furhter messages.
+
+### Part 3. Server
+
+After running the server with he pkl file, it's possible to run a message and check which categories that message triggers. 
+
+## Licensing, Authors, and Acknowledgements <a name="licensing"></a>
+
+The author of this project is Rodrigo Sabben
+
+The code is licensed under MIT License. 
