@@ -1,4 +1,5 @@
 import json
+from optparse import Values
 import joblib
 import plotly
 import pandas as pd
@@ -45,6 +46,10 @@ def index():
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
+    values = df.loc[:, "related":"direct_report"]
+    x = values.columns
+    y = (values != 0).sum().values
+
     graphs = [
         {
             'data': [
@@ -63,9 +68,26 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {
+            'data': [
+                Bar(
+                    x=x,
+                    y=y
+                )
+            ],
+
+            'layout': {
+                'title': 'Items p/ Category',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Categories"
+                }
+            }
         }
     ]
-    
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
