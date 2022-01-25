@@ -41,7 +41,10 @@ The files of the project has the following architecture.
 
 
 ## Project Motivation <a name="motivation"></a>
-In this course, you've learned and built on your data engineering skills to expand your opportunities and potential as a data scientist. In this project, you'll apply these skills to analyze disaster data from Figure Eight to build a model for an API that classifies disaster messages.
+A disaster recovery situation needs a fast and accurate response. One way to produce good actions that will result in qualified responses is to help the first line to understand what kind of need is being requested to correctly dispatch the team/help needed. 
+
+This project has the goal to create a server that helps the first line support to understand and categorize a text received from a disaster situation. The categories available will be used to bring efficiency in the responses to the disaster making it possible for the support line to request actions from the correct people. 
+
 
 ## How to use <a name="how_to_use"></a>
 1. Install dependencies.
